@@ -1,0 +1,63 @@
+document.ReplaceByLink = (el, url) => {
+  if (el == null)
+    return;
+
+  var linkEl = document.createElement('a');
+
+  linkEl.setAttribute('href', url);
+  if (el.getAttribute('target') !== null) {
+    linkEl.setAttribute('target', el.getAttribute('target'));
+  } else {
+    linkEl.setAttribute('target', el.getAttribute('data-target'));
+  }
+  if (el.getAttribute('data-rel') !== null) {
+    linkEl.setAttribute('rel', el.getAttribute('data-rel'));
+  }
+  if (el.getAttribute('data-onClick') !== null) {
+    linkEl.setAttribute('onclick', el.getAttribute('data-onClick'));
+  }
+  linkEl.setAttribute('class', el.className);
+  if (el.innerHTML == '') {
+    linkEl.innerHTML = url
+  } else {
+    linkEl.innerHTML = el.innerHTML
+  }
+  el.replaceWith(linkEl);
+}
+
+
+window.addEventListener('load', function () {
+  // Used for static links
+  const linksId = {
+    'demenagez-engie': 'https://particuliers.engie.fr/demenagement.html?utm_medium=referral&utm_source=seloger&utm_campaign=partenariat',
+    'georisques': 'https://www.georisques.gouv.fr',
+  }
+
+  const linksClass= {
+    'aviv-companies': 'https://www.aviv-group.com/companies'
+  }
+
+  // By id
+  for (const [label, url] of Object.entries(linksId)) {
+    var el = document.getElementById(label);
+    document.ReplaceByLink(el, url);
+  }
+  // By class
+  for (const [label, url] of Object.entries(linksClass)) {
+    var elements = document.getElementsByClassName(label);
+    [...elements].forEach((el) => {
+      document.ReplaceByLink(el, url);
+    })
+    
+  }
+
+  // Used for non static link
+  var elements = document.getElementsByClassName('botHiddenLink');
+  [...elements].forEach((el) => {
+    var url = el.getAttribute('data-first-part');
+    if (el.getAttribute('data-mid-part') != '')
+      url += '.' + el.getAttribute('data-mid-part')
+    url += '.' + el.getAttribute('data-last-part');
+    el.setAttribute('href', url);
+  });
+});
